@@ -13,6 +13,34 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/maxPrice", async (req, res) => {
+  try {
+    const vinyls = await VinylModel.find({})
+    .sort({price: -1}); 
+    res.json(vinyls);
+  } catch (err) {
+    res.status(500).json({ err: "Internal server error" });
+  }
+});
+
+
+router.get("/genre/:filter", async (req, res) => {
+  try {
+    const filter = req.params.filter;
+    const vinyls = await VinylModel.find({ genre: filter });
+
+    if (vinyls.length === 0) {
+      return res.status(404).json({ error: "No vinyls found for this genre" });
+    }
+
+    res.json(vinyls);
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
 router.get("/:id", async (req, res) => {
   try {
     const vinyl = await VinylModel.findById(req.params.id);
